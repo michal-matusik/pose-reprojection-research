@@ -1,0 +1,33 @@
+# Ported near-verbatim from ../Research/cfg.yaml: Halpe-26 (AlphaPose) 2D +
+# H36M-17 (MotionBERT) 3D, leveled using a phone/IMU pitch+roll reading rather
+# than known camera extrinsics. Use this if you have AlphaPose+MotionBERT+IMU
+# data instead of this repo's native RTMPose+VideoPose3D pipeline.
+
+joint_format: halpe26
+vertical_source: imu_pitch_roll
+
+# IMU pitch/roll in degrees, as read from the capture device.
+# Example values from ../Research/cfg.yaml (a specific recorded capture) --
+# replace with your own device's reading.
+imu_pitch_roll_deg: [177.990, 0.280]
+R_imu_to_cam: [[1, 0, 0], [0, 1, 0], [0, 0, 1]]   # identity unless you know a non-identity mapping
+
+# --- Virtual camera ---
+keep_yaw: true
+
+# Camera placement (sequence-constant)
+virtual_cam_height: 1.5
+depth_factor: 2.0
+foreshorten_tau: 0.25
+
+# Optional size normalization (off for benchmarks)
+size_control_enabled: false
+size_control_target_fill: 0.55
+size_control_tolerance: 0.05
+size_control_control: adjust_focal
+
+# Smoothing (optional)
+savgol_window: 0
+savgol_polyorder: 2
+
+coord_system_out: undistorted

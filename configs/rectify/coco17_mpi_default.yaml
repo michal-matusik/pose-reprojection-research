@@ -1,0 +1,42 @@
+# Default config for this repo's native pipeline: RTMPose (COCO-17) 2D +
+# VideoPose3D (H36M-17) 3D, evaluated against MPI-INF-3DHP.
+#
+# Values below (h_cam, depth_factor, tau_foreshorten) are carried over unchanged
+# from ../Research/cfg.yaml, where they are explicitly noted as a starting point,
+# not tuned for any benchmark. See README "Planned ablations" for the grid search
+# this config is meant to seed.
+
+joint_format: coco17
+
+# MPI-INF-3DHP provides calibrated camera extrinsics directly (no phone IMU),
+# so the vertical is derived from the known world->camera rotation instead of
+# an IMU pitch/roll reading.
+vertical_source: camera_extrinsics
+# ASSUMED, not yet verified against a real MPI-INF-3DHP calibration file: the
+# Skeletool convention MPI-INF-3DHP uses is commonly [0,1,0], but this has not
+# been checked against actual camera.calibration data in this repo. Verify
+# `n` in the rectifier's output metadata looks sane (roughly vertical in the
+# image) on a real run before trusting results with this default.
+world_up_axis: [0.0, 1.0, 0.0]
+
+# --- Virtual camera ---
+keep_yaw: true
+
+# Camera placement (sequence-constant)
+virtual_cam_height: 1.5    # h_cam; ported from ../Research/cfg.yaml, not re-tuned here
+depth_factor: 2.0
+foreshorten_tau: 0.25
+
+# Optional size normalization (off, matches ../Research/cfg.yaml default for benchmarks)
+size_control_enabled: false
+size_control_target_fill: 0.55
+size_control_tolerance: 0.05
+size_control_control: adjust_focal
+
+# Smoothing (off by default; see scripts/smooth_rtmpose_keypoints.py for the
+# existing standalone smoothing utility, whose effect on accel error is already
+# measured separately)
+savgol_window: 0
+savgol_polyorder: 2
+
+coord_system_out: undistorted

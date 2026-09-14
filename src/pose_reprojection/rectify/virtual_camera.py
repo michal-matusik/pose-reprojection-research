@@ -16,7 +16,8 @@ Halpe-26 + phone-IMU data the original script assumed:
     no IMU reading needed).
 
 Hypothesis under test (see project README): a first-pass 3D pose estimate may carry
-enough depth information to approximately canonicalize 2D keypoints from an
+enough *relative* joint depth (root-centered, not absolute/metric depth -- see
+README "Clarification") to approximately canonicalize 2D keypoints from an
 unfavorable camera viewpoint, by reprojecting them through a leveled virtual camera
 before a second 3D lifting pass. This module implements the reprojection step only;
 it does not itself claim or measure whether re-lifting improves accuracy — see

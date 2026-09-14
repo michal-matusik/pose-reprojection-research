@@ -115,6 +115,14 @@ def main():
             "Single clip, single subject/sequence/camera -- not a benchmark. Any result here is "
             "preliminary and should not be read as a general claim about the method.",
             "MPJPE numbers are only meaningful after joint order, scale, and coordinate-frame checks.",
+            # TODO(#1): rectified_videopose3d's 3D pose is expressed in the constructed virtual
+            # camera's frame, not the GT camera's frame. Plain root_mpjpe/n_mpjpe above assume a
+            # common coordinate frame and are NOT yet meaningful for rectified_videopose3d until
+            # this is resolved -- see https://github.com/michal-matusik/pose-reprojection-research/issues/1.
+            "KNOWN GAP (issue #1): rectified_videopose3d's root_mpjpe_*/n_mpjpe_* are not yet "
+            "meaningful -- the re-lifted pose is in the virtual camera's frame, not the GT camera's "
+            "frame, and those two metrics assume a common frame. Only pa_mpjpe_* (Procrustes-"
+            "aligned) is currently trustworthy for the rectified condition.",
             "PA-MPJPE/P-MPJPE is the safest first comparison because it allows similarity alignment.",
             "VideoPose3D checkpoint was trained for Human3.6M-style 2D detections; both raw and "
             "rectified predictions share this domain mismatch, so the delta -- not the absolute "

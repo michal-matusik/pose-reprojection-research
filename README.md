@@ -16,6 +16,16 @@ smoothing alone achieves.
 This is a cautious, unproven hypothesis, not a claim. Nothing below should be read
 as evidence that it holds until explicitly marked "experimentally verified."
 
+Clarification: "depth information" here means **relative joint depth** — the
+per-joint depth recovered by the first-pass 3D lift (VideoPose3D/MotionBERT),
+expressed relative to the pelvis root (root-centered, as both lifters output).
+This is not a claim about absolute/metric depth accuracy: the lifter's scale is
+nominally the H36M-style convention it was trained on, which is known to be a
+domain mismatch for MPI-INF-3DHP data (see the existing caveat in
+`scripts/evaluate_videopose3d_mpi_clip.py`), so relative depth *ordering/shape*
+is what the rectifier relies on, not the pelvis-to-camera distance being
+correct in real-world units.
+
 ## Pipeline
 
 ```mermaid
@@ -110,6 +120,16 @@ Split deliberately into three tiers so it's unambiguous what has actually been r
   against a real MPI-INF-3DHP `camera.calibration` file — this is currently an
   unverified assumption (see comment in
   `configs/rectify/coco17_mpi_default.yaml`).
+- **[Known evaluation gap, tracked as
+  #1](https://github.com/michal-matusik/pose-reprojection-research/issues/1):**
+  the rectified condition's re-lifted 3D pose is expressed in the constructed
+  virtual camera's frame, not the GT camera's frame. Plain MPJPE/N-MPJPE (which
+  assume a common coordinate frame) are therefore not yet meaningful for the
+  rectified condition in `evaluate_rectification_mpi_clip.py` — only PA-MPJPE
+  (which solves for rotation via Procrustes alignment) is currently trustworthy
+  there. Needs resolving (documenting PA-MPJPE as primary, or rotating the
+  re-lifted pose back into the GT frame before comparison) before drawing any
+  conclusion from plain/N-MPJPE deltas.
 - See "Planned ablations" below for the broader experiment set.
 
 ## Reproducing the rectification ablation
